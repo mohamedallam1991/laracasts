@@ -5,6 +5,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 //use Illuminate\Http\Request;
 use App\Http\Requests\CreateArticleRequest;
+use App\Tag;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Request;
@@ -28,12 +29,15 @@ class ArticlesController extends Controller {
     public function show ($id)
     {
         $article = Article::findOrFail($id);
+        
         return view('articles.show', compact('article'));
     }
 
     public function create ()
     {
-        return view('articles.create');
+        $tags = Tag::lists('name','id');
+
+        return view('articles.create', compact('tags'));
     }
 
     /**
@@ -42,18 +46,29 @@ class ArticlesController extends Controller {
      */
     public function store (CreateArticleRequest $request)
     {
-        Auth::user()->articles()->create($request->all());
+        $article = Auth::user()->articles()->create($request->all());
+
+        $article->tags()->attach($request->input('tag_list'));
+
+        session()->flash('flash_message', 'Article created');
         return redirect('articles');
     }
     public function edit ($id)
     {
         $article = Article::findOrFail($id);
-        return view('articles.edit', compact('article'));
+
+        $tags = Tag::lists('name','id');
+
+        return view('articles.edit', compact('article', 'tags'));
     }
     public function update ($id, CreateArticleRequest $request)
     {
         $article = Article::findOrFail($id);
         $article->update($request->all());
+        $article->tags()->sync($request->input('tag_list'));
+
+        session()->flash('flash_message', 'Article Updated');
+
         return redirect('articles');
 
 

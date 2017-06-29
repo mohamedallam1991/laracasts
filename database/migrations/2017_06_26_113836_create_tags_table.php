@@ -28,7 +28,6 @@ class CreateTagsTable extends Migration {
 
             $table->timestamps();
 
-
         });
 
 	}

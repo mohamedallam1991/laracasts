@@ -13,7 +13,7 @@
 
 
 //
-//Route::get('/', 'WelcomeController@index');
+Route::get('/', 'ArticlesController@index');
 //Route::get('contact', 'WelcomeController@contact');
 //// we define a route by using Get request, we redirect the request to a controller
 //// which uses the method and give a reponse
